@@ -1,0 +1,65 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: microservice-ssoserver-sample
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels: 
+        name: ssoserver-deployment
+    spec:
+      containers:
+      - name: microservice-ssoserver
+        image: microservice-ssoserver:latest
+        env:
+        - name: EXTERNAL_IP_ADDR
+          valueFrom:
+            configMapKeyRef:
+              name: ipaddr-config
+              key: EXTERNAL_IP_ADDR
+        ports: 
+          - containerPort: 9443
+        imagePullPolicy: Never
+        volumeMounts:
+        - name: keystore
+          mountPath: /etc/wlp/config/keystore
+        - name: truststore
+          mountPath: /etc/wlp/config/truststore
+        - name: liberty-config
+          mountPath: /opt/ibm/wlp/usr/servers/defaultServer/configMount
+        - name: userids
+          mountPath: /opt/ibm/wlp/usr/servers/defaultServer/useridMount
+        imagePullPolicy: Never
+      volumes:
+      - name: keystore
+        secret:
+          secretName: wlp-keystore  
+      - name: truststore
+        secret:
+          secretName: wlp-truststore
+      - name: userids
+        secret:
+          secretName: liberty-userids
+      - name: liberty-config
+        configMap:
+          name: liberty-config
+          items:
+            - key: keystore.xml
+              path: keystore.xml
+            - key: logging.xml
+              path: logging.xml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ssoserver-service
+  namespace: default
+spec:
+  type: NodePort
+  ports:
+    - port: 9443
+      nodePort: 31005
+    
+  selector:
+    name: ssoserver-deployment
