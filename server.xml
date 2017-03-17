@@ -39,6 +39,7 @@
             <client name="rp" secret="rpSecret" displayname="rp" resourceIds="abc123"
                 scope="openid profile scope1 email phone address" enabled="true">
                 <redirect>https://${env.EXTERNAL_IP_ADDR}</redirect>
+                <redirect>https://${env.EXTERNAL_IP_ADDR}:31015/oidcclient/redirect/rp</redirect>
              </client>
         </localStore>
     </oauthProvider>
