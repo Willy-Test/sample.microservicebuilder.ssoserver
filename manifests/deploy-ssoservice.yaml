@@ -11,14 +11,8 @@ spec:
     spec:
       containers:
       - name: microservice-ssoserver
-        image: microservice-ssoserver:latest
-        env:
-        - name: EXTERNAL_IP_ADDR
-          valueFrom:
-            configMapKeyRef:
-              name: ipaddr-config
-              key: EXTERNAL_IP_ADDR
-        ports: 
+        image: microservice-ssoserver:latest        
+        ports:
           - containerPort: 9443
         imagePullPolicy: IfNotPresent
         env:
@@ -32,6 +26,11 @@ spec:
               secretKeyRef:
                 name: mb-truststore-password
                 key: password
+          - name: EXTERNAL_IP_ADDR
+            valueFrom:
+              configMapKeyRef:
+                name: ipaddr-config
+                key: EXTERNAL_IP_ADDR                
         volumeMounts:
         - name: keystore
           mountPath: /etc/wlp/config/keystore
