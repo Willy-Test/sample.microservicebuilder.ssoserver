@@ -52,7 +52,7 @@ spec:
           secretName: liberty-userids
       - name: liberty-config
         configMap:
-          name: liberty-config
+          name: liberty-logging-config
           items:
             - key: keystore.xml
               path: keystore.xml
