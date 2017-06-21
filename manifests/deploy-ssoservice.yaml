@@ -11,16 +11,26 @@ spec:
     spec:
       containers:
       - name: microservice-ssoserver
-        image: microservice-ssoserver:latest
-        env:
-        - name: EXTERNAL_IP_ADDR
-          valueFrom:
-            configMapKeyRef:
-              name: ipaddr-config
-              key: EXTERNAL_IP_ADDR
-        ports: 
+        image: microservice-ssoserver:latest        
+        ports:
           - containerPort: 9443
         imagePullPolicy: IfNotPresent
+        env:
+          - name: MB_KEYSTORE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mb-keystore-password
+                key: password
+          - name: MB_TRUSTSTORE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mb-truststore-password
+                key: password
+          - name: EXTERNAL_IP_ADDR
+            valueFrom:
+              configMapKeyRef:
+                name: ipaddr-config
+                key: EXTERNAL_IP_ADDR                
         volumeMounts:
         - name: keystore
           mountPath: /etc/wlp/config/keystore
@@ -33,16 +43,16 @@ spec:
       volumes:
       - name: keystore
         secret:
-          secretName: wlp-keystore  
+          secretName: mb-keystore
       - name: truststore
         secret:
-          secretName: wlp-truststore
+          secretName: mb-truststore
       - name: userids
         secret:
           secretName: liberty-userids
       - name: liberty-config
         configMap:
-          name: liberty-config
+          name: liberty-logging-config
           items:
             - key: keystore.xml
               path: keystore.xml
