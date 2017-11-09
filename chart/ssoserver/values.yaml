@@ -1,0 +1,10 @@
+# Default values for ssoserver.
+service: 
+  type: NodePort
+  nodePort: 31005
+  externalPort: 9443
+  internalPort: 9443
+image:
+  repository: microservice-ssoserver
+  tag: latest
+  pullPolicy: IfNotPresent
