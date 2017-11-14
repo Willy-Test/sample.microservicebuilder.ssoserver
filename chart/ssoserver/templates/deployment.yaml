@@ -1,7 +1,12 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: microservice-ssoserver-sample
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
 spec:
   replicas: 1
   template:
@@ -10,11 +15,11 @@ spec:
         name: ssoserver-deployment
     spec:
       containers:
-      - name: microservice-ssoserver
-        image: microservice-ssoserver:latest        
+      - name: "{{  .Chart.Name  }}"
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}        
         ports:
           - containerPort: 9443
-        imagePullPolicy: IfNotPresent
         env:
           - name: MB_KEYSTORE_PASSWORD
             valueFrom:
@@ -58,17 +63,5 @@ spec:
               path: keystore.xml
             - key: logging.xml
               path: logging.xml
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: ssoserver-service
-  namespace: default
-spec:
-  type: NodePort
-  ports:
-    - port: 9443
-      nodePort: 31005
-    
-  selector:
-    name: ssoserver-deployment
+          optional: true
+
