@@ -9,6 +9,10 @@
       <feature>logstashCollector-1.0</feature>
     </featureManager>
 
+    <include optional="true" location="/opt/ibm/wlp/usr/servers/defaultServer/configMount/keystore.xml"/>
+    <include optional="true" location="/opt/ibm/wlp/usr/servers/defaultServer/configMount/logging.xml "/>
+    <include optional="true" location="/opt/ibm/wlp/usr/servers/defaultServer/useridMount/userids.xml"/>
+
     <httpEndpoint id="defaultHttpEndpoint"
         host="*"
         httpPort="9080"
